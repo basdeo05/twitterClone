@@ -12,8 +12,14 @@ class LoginViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
         // Do any additional setup after loading the view.
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        
+        if UserDefaults.standard.bool(forKey: "userLoggedIn") == true {
+            performSegue(withIdentifier: "loginToHome", sender: self)
+        }
     }
     
     //Login in button action
@@ -25,7 +31,9 @@ class LoginViewController: UIViewController {
         
         //twitterAPI Class provided by CodePath
         //if successful go to perforom segue
+        //set user defaults so app can remember that the user logged in and verified
         TwitterAPICaller.client?.login(url: myURL, success: {
+            UserDefaults.standard.set(true, forKey: "userLoggedIn")
             self.performSegue(withIdentifier: "loginToHome", sender: self)
         }, failure: { (error) in
            print ("There was an error logging in: \(error)")
