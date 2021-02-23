@@ -14,15 +14,32 @@ class HomeTableViewController: UITableViewController {
     var tweetArray = [NSDictionary]()
     var numberOfTweets: Int!
     
+    //to have the refresh when pulling down need to have a refresh controll
+    let myRefreshControl = UIRefreshControl()
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
         loadTweets()
+        
+        /*
+         -want to add a target for refresh control
+         -what action I want to tie to this refresh control
+         -Target is where I want this to happen
+         -I want this to happen in this screen so will be self
+         -Selector/action means what do you want us to do.
+         -Have to turn load tweets function to a object c load tweets function
+         -Value changed is for the pull down method
+         -Give the table view the action
+         -Stop the wheel inside the closure method after table view has been loaded
+        */
+        myRefreshControl.addTarget(self, action: #selector(loadTweets), for: .valueChanged)
+        tableView.refreshControl = myRefreshControl
     }
     
     
     
-    func loadTweets(){
+    @objc func loadTweets(){
         //url to make request
         let myUrl = "https://api.twitter.com/1.1/statuses/home_timeline.json"
         
@@ -41,6 +58,8 @@ class HomeTableViewController: UITableViewController {
                                                                self.tweetArray.append(tweet)
                                                            }
                                                             self.tableView.reloadData()
+                                                            //stopping the refresh
+                                                            self.myRefreshControl.endRefreshing()
                                                             
                                                         }, failure: { (error) in
                                                             print ("Could not retreive tweets")
