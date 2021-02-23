@@ -40,12 +40,15 @@ class HomeTableViewController: UITableViewController {
     
     
     @objc func loadTweets(){
+        //determine how many tweets to load
+        numberOfTweets = 20
+        
         //url to make request
         let myUrl = "https://api.twitter.com/1.1/statuses/home_timeline.json"
         
         //paramaters for request
         // can add more parameters by putitng ,
-        let myParams = ["count": 10]
+        let myParams = ["count": numberOfTweets]
         
         
         TwitterAPICaller.client?.getDictionariesRequest(url: myUrl, parameters: myParams,
@@ -66,6 +69,38 @@ class HomeTableViewController: UITableViewController {
                                                         })
     }
     
+    
+    //endless scrolling function
+    func loadMoreTweets() {
+        //same url as before
+        let myUrl = "https://api.twitter.com/1.1/statuses/home_timeline.json"
+        
+        //change number of tweets to load
+        numberOfTweets = numberOfTweets + 20
+        
+        //paramaters for request
+        // can add more parameters by putitng ,
+        let myParams = ["count": numberOfTweets]
+        
+        
+        TwitterAPICaller.client?.getDictionariesRequest(url: myUrl, parameters: myParams,
+                                                        
+                                                        success: { (tweets: [NSDictionary]) in
+                                                            
+                                                            self.tweetArray.removeAll()
+                                                            
+                                                            for tweet in tweets {
+                                                               self.tweetArray.append(tweet)
+                                                           }
+                                                            self.tableView.reloadData()
+                                                            
+                                                            
+                                                        }, failure: { (error) in
+                                                            print ("Could not retreive tweets")
+                                                        })
+    }
+    
+
     
     //when user clicks logout button
     @IBAction func onLogout(_ sender: UIBarButtonItem) {
@@ -93,7 +128,6 @@ class HomeTableViewController: UITableViewController {
         return cell
     }
     
-    
     // MARK: - Table view data source
 
     override func numberOfSections(in tableView: UITableView) -> Int {
@@ -104,5 +138,15 @@ class HomeTableViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         // #warning Incomplete implementation, return the number of rows
         return tweetArray.count
+    }
+    
+    //method used to call load more tweets function
+    //when get to end of page run loadMoreTweets
+    override func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        
+        if indexPath.row  == tweetArray.count - 1{
+            loadMoreTweets()
+        }
+        
     }
 }
