@@ -35,6 +35,13 @@ class HomeTableViewController: UITableViewController {
         */
         myRefreshControl.addTarget(self, action: #selector(loadTweets), for: .valueChanged)
         tableView.refreshControl = myRefreshControl
+        
+        //making tableview cell dynamic in height
+        //this row height will be automatically calculated
+        //give tableview projected rowHeight to start with but if its smaller are larger will be changed.
+        tableView.rowHeight = UITableView.automaticDimension
+        tableView.estimatedRowHeight = 150
+        
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -129,6 +136,20 @@ class HomeTableViewController: UITableViewController {
         if let imageData = data {
             cell.profileImageView.image = UIImage(data: imageData)
         }
+        
+        
+        cell.setFavorite(tweetArray[indexPath.row]["favorited"] as! Bool)
+        
+        cell.tweetID = tweetArray[indexPath.row]["id"] as! Int
+        
+        cell.setRetweeted(tweetArray[indexPath.row]["retweeted"] as! Bool)
+        
+        
+        
+        
+        
+        
+        
         
         return cell
     }
