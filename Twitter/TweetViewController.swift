@@ -12,12 +12,16 @@ class TweetViewController: UIViewController {
 
     
     @IBOutlet weak var tweetTextView: UITextView!
+    let characterCount = 280
+    @IBOutlet weak var countLabel: UILabel!
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
         //Show keyboard as soon as the screen loads
         tweetTextView.becomeFirstResponder()
+        tweetTextView.delegate = self
     }
 
     @IBAction func cancelPressed(_ sender: UIBarButtonItem) {
@@ -40,4 +44,15 @@ class TweetViewController: UIViewController {
             //Shold make an alert to put some text
         }
     }
+}
+
+extension TweetViewController: UITextViewDelegate {
+    
+    func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
+        
+        let newText = NSString(string: tweetTextView.text!).replacingCharacters(in: range, with: text)
+        countLabel.text = "\(newText.count) / \(characterCount)"
+        return newText.count < characterCount
+    }
+    
 }
